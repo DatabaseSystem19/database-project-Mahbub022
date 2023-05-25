@@ -86,3 +86,4 @@ INSERT INTO student VALUES (7, 'R007', 'Business Administration', 5);
 INSERT INTO student VALUES (8, 'R008', 'Mathematics', 4);
 INSERT INTO student VALUES (9, 'R009', 'Civil Engineering', 1);
 INSERT INTO student VALUES (10, 'R010', 'Biology', 6);
+
