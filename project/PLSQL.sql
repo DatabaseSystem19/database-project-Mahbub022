@@ -109,7 +109,7 @@ end;
 set serveroutput on
 declare
 roll  department.roll_no%type:='R001';
-faculty department.dept_name%type;
+faculty department.faculty%type;
 dept department.dept_name%type;
 cursor c is select dept_name,faculty from department where faculty= fun(roll); 
 begin
