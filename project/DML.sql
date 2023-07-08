@@ -52,4 +52,8 @@ join applicant a on a.applicant_id = eg.applicant_id
 join examinee e on e.applicant_id = a.applicant_id
 join student s on s.merit_place = e.merit_place
 join department d on d.roll_no = s.roll_no; 
+<<<<<<< HEAD
 select * from admission;
+=======
+select * from admission;
+>>>>>>> d3c61a4cb8141bb22c264f82bf7fb81d38d7b22f
