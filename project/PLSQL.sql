@@ -109,7 +109,7 @@ end;
 set serveroutput on
 declare
 roll  department.roll_no%type:='R001';
-faculty department.dept_name%type;
+faculty department.faculty%type;
 dept department.dept_name%type;
 cursor c is select dept_name,faculty from department where faculty= fun(roll); 
 begin
@@ -126,3 +126,12 @@ end;
 --drop procedur / function
 drop procedure proc;
 drop function fun;
+
+--trigger
+CREATE or REPLACE TRIGGER update_total_mark
+BEFORE INSERT OR UPDATE ON examinee
+REFERENCING OLD AS O NEW AS n 
+FOR EACH ROW
+BEGIN
+    n.total_mark := n.phy_mark + n.chem_mark + n.math_mark + n.eng_mark + n.gpa_mark;
+END;

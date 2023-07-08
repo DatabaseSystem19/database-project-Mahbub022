@@ -1,55 +1,75 @@
---pagesize & linesize
-set pagesize 1500;
-set linesize 300;
+--drop tables & views
+drop view admission;
+drop table eligible;
+drop table student;
+drop table examinee;
+drop table profile;
+drop table applicant;
+drop table department;
 
--- select
-select * from profile;
-select name from profile;
 
---update & delete
-INSERT INTO applicant VALUES ('A016', 'Venue1', timestamp '2023-05-20 09:00:00');
-update applicant set exam_venue = 'Venue5' where applicant_id = 'A016';
-delete from applicant where applicant_id = 'A016';
+--profile
+create table profile(
+			reg_no varchar(30) primary key,
+			hsc_roll varchar(30) not null,
+			name varchar(30) not null, 
+			father_name varchar(30) not null,
+			mother_name varchar(30) not null,
+			birth_date date not null,
+			address varchar(30) not null,
+			email varchar(30) unique not null,
+			religion varchar(30) not null check (religion in ('Islam','Hindu','Budhha','Christ'))
+);
 
---union, intersect, except
-select applicant_id,apply_time from applicant where extract (hour from apply_time)>10 
-union
-select applicant_id,apply_time from applicant where extract (hour from apply_time)<16;  
+--applicant
+create table applicant(
+			applicant_id varchar(30) primary key,
+			exam_venue varchar(30) not null,
+			apply_time timestamp not null
+);
 
---with clause
-with avg_number(hsc_mark) as (select avg(hsc_mark) from eligible)
-select * from eligible,avg_number where eligible.hsc_mark > avg_number.hsc_mark; 
+--eligible
+create table eligible(
+			reg_no varchar(30),
+			applicant_id varchar(30),
+			hsc_mark numeric(3) not null check (hsc_mark<=600),
+			hsc_gpa numeric(3,2) not null check(hsc_gpa<=5.00),
+			ssc_gpa numeric(3,2) not null check(ssc_gpa<=5.00), 
+			eligibility varchar(5) not null check(eligibility in ('yes','no')),
+			foreign key (reg_no) references profile (reg_no),
+			foreign key (applicant_id) references applicant (applicant_id)
+			on delete cascade
+);
 
---aggregate
-select count (distinct hsc_gpa) as gpa_hsc from eligible; 
-select max (total_mark) as exam_marks from examinee; 
+--examinee
+create table examinee(
+			applicant_id varchar(30),
+			phy_mark numeric(3) not null check (phy_mark<=150),
+			chem_mark numeric(3) not null check (chem_mark<=150),
+			math_mark numeric(3) not null check (math_mark<=150),
+			eng_mark numeric(3) not null check (eng_mark<=50),
+			gpa_mark numeric(3) not null check (gpa_mark<=100),
+			total_mark numeric(3) check (total_mark<=600),
+			merit_place numeric(5) primary key,
+			foreign key (applicant_id) references applicant(applicant_id)
+			on delete cascade
+);
 
---group by & having
-select faculty,count(distinct dept_name) as number_of_dept from department group by faculty;
-select faculty,count(distinct dept_name) as number_of_dept from department group by faculty having count(dept_name) > 2;
+--department
+create table department(
+			roll_no varchar(30) primary key,
+			dept_name varchar(30) not null,
+			dept_id numeric(2) not null,
+			faculty varchar(30) not null
+);
 
---nested subquery
-select name from profile where reg_no = 
-(select reg_no from eligible where applicant_id =
-(select applicant_id from examinee where merit_place = 1 ));
-
---set membership
-select name from profile where reg_no in
-(select reg_no from eligible where applicant_id in 
-(select applicant_id from examinee where merit_place >=1 and merit_place <=5 ));
-
---string
-select dept_name,faculty from department where dept_name like '%Engineer%'; 
-
---join operations
-select applicant_id,total_mark,merit_place,roll_no from examinee natural join student order by merit_place asc;
-select name,merit_place from profile join eligible on profile.reg_no = eligible.reg_no join examinee on eligible.applicant_id = examinee.applicant_id where merit_place<4 order by merit_place asc; 
-
---views
-create view admission as select name,p.reg_no,a.applicant_id,hsc_gpa,ssc_gpa,gpa_mark,phy_mark,math_mark,chem_mark,eng_mark,total_mark,
-e.merit_place,s.roll_no,dept_name,dept_id,faculty from profile p join eligible eg  on p.reg_no = eg.reg_no
-join applicant a on a.applicant_id = eg.applicant_id
-join examinee e on e.applicant_id = a.applicant_id
-join student s on s.merit_place = e.merit_place
-join department d on d.roll_no = s.roll_no; 
-select * from admission;
+--student
+create table student(
+			merit_place numeric(5) not null,
+			roll_no varchar(30) not null,
+			dept_choice varchar(30) not null,
+			priority numeric(2) not null,
+			foreign key (merit_place) references examinee(merit_place),
+			foreign key (roll_no) references department(roll_no)
+			on delete cascade
+);
