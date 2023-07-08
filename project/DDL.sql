@@ -72,8 +72,4 @@ create table student(
 			foreign key (merit_place) references examinee(merit_place),
 			foreign key (roll_no) references department(roll_no)
 			on delete cascade
-<<<<<<< HEAD
 );
-=======
-);
->>>>>>> d3c61a4cb8141bb22c264f82bf7fb81d38d7b22f
