@@ -49,11 +49,7 @@ create table examinee(
 			math_mark numeric(3) not null check (math_mark<=150),
 			eng_mark numeric(3) not null check (eng_mark<=50),
 			gpa_mark numeric(3) not null check (gpa_mark<=100),
-<<<<<<< HEAD
 			total_mark numeric(3) check (total_mark<=600),
-=======
-			total_mark numeric(3) not null check (total_mark<=600),
->>>>>>> d3c61a4cb8141bb22c264f82bf7fb81d38d7b22f
 			merit_place numeric(5) primary key,
 			foreign key (applicant_id) references applicant(applicant_id)
 			on delete cascade
